@@ -103,7 +103,7 @@ export default {
 
 <style scoped>
 .service-hero {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   text-align: center;
   padding: 8rem 2rem 4rem;
@@ -195,7 +195,7 @@ export default {
   cursor: pointer;
   transition: all 0.3s;
   box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-  color: #f5576c;
+  color: #667eea;
   font-weight: bold;
   display: flex;
   align-items: center;
@@ -204,7 +204,7 @@ export default {
 }
 
 .carousel-arrow:hover {
-  background: #f5576c;
+  background: #667eea;
   color: white;
   transform: scale(1.1);
 }
@@ -226,12 +226,12 @@ export default {
 }
 
 .dot:hover {
-  background: #f5576c;
+  background: #667eea;
   transform: scale(1.2);
 }
 
 .dot.active {
-  background: #f5576c;
+  background: #667eea;
   width: 30px;
   border-radius: 10px;
 }
@@ -264,7 +264,7 @@ export default {
 }
 
 .book-btn {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
   padding: 12px 30px;
@@ -303,3 +303,4 @@ export default {
   }
 }
 </style>
+
