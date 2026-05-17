@@ -1,0 +1,23 @@
+import { createRouter, createWebHistory } from 'vue-router'
+import HomePage from '../pages/HomePage.vue'
+
+const routes = [
+  { path: '/', name: 'home', component: HomePage },
+  { path: '/raspisanie', name: 'raspisanie', component: () => import('../pages/RaspisaniePage.vue') },
+  { path: '/login', name: 'login', component: () => import('../pages/LoginPage.vue') },
+  { path: '/register', name: 'register', component: () => import('../pages/RegisterPage.vue') },
+  { path: '/service/gym', name: 'gym', component: () => import('../pages/GymPage.vue') },
+  { path: '/service/group', name: 'group', component: () => import('../pages/GroupPage.vue') },
+  { path: '/service/personal', name: 'personal', component: () => import('../pages/PersonalPage.vue') },
+  { path: '/service/spa', name: 'spa', component: () => import('../pages/SpaPage.vue') }
+]
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes,
+  scrollBehavior(to, from, savedPosition) {
+    return { top: 0, behavior: 'smooth' }
+  }
+})
+
+export default router
