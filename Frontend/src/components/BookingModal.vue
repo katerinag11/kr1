@@ -41,10 +41,10 @@
         </div>
 
         <div class="form-actions">
-          <button type="button" class="btn-secondary" @click="close">Отмена</button>
           <button type="submit" class="btn-primary" :disabled="loading">
             {{ loading ? 'Отправка...' : 'Отправить заявку' }}
           </button>
+          <button type="button" class="btn-secondary" @click="close">Отмена</button>
         </div>
       </form>
 
