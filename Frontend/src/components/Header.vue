@@ -2,6 +2,8 @@
 <header>
   <div class="logo" @click="$router.push('/')">FitComplex</div>
   <nav>
+    <router-link to="/profile">Профиль</router-link>
+  <router-link to="/admin">Админ панель</router-link>
     <router-link to="/">Главная</router-link>
     <router-link to="/raspisanie">Расписание</router-link>
     <a href="#" @click.prevent="scrollToSection('services')">Услуги</a>

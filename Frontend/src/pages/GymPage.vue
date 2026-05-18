@@ -40,16 +40,16 @@
         
         <div class="service-info">
           <h2>О тренажёрном зале</h2>
-          <p>Наш тренажёрный зал оснащён самым современным оборудованием ведущих мировых брендов: Technogym, Matrix, Life Fitness.</p>
+          <p>Наш тренажёрный зал оснащён самым современным оборудованием ведущих мировых брендов: Technogym, Matrix, Life Fitness. Здесь вы найдёте всё необходимое для достижения любых фитнес-целей: от кардиотренировок до серьёзной силовой работы.</p>
           
           <h3>Преимущества:</h3>
           <ul>
-            <li>Современное оборудование Technogym, Matrix, Life Fitness</li>
-            <li>Зона функционального тренинга</li>
-            <li>Зона свободных весов до 200 кг</li>
-            <li>Персональные шкафчики</li>
-            <li>Бесплатные полотенца</li>
-            <li>Питьевая вода и зона отдыха</li>
+            <li> Современное оборудование Technogym, Matrix, Life Fitness</li>
+            <li> Зона функционального тренинга</li>
+            <li> Зона свободных весов до 200 кг</li>
+            <li> Персональные шкафчики</li>
+            <li> Бесплатные полотенца</li>
+            <li> Питьевая вода и зона отдыха</li>
           </ul>
 
           <button class="book-btn" @click="openBooking">Записаться на тренировку</button>
@@ -63,16 +63,23 @@
 import gym1 from '../assets/gym1.jpg'
 import gym2 from '../assets/gym2.jpg'
 import gym3 from '../assets/gym3.jpg'
-
 export default {
   name: 'GymPage',
   data() {
     return {
       currentIndex: 0,
       galleryImages: [
-        { url: gym1, title: 'Современные тренажёры' },
-        { url: gym2, title: 'Зона свободных весов' },
-        { url: gym3, title: 'Кардио зона' }
+        {
+          url: gym1, title: 'Современные тренажёры'
+        },
+        {
+          url: gym2,
+          title: 'Кардио зона'
+        },
+        {
+          url: gym3,
+          title: 'Зона свободных весов '
+        }
       ]
     }
   },
