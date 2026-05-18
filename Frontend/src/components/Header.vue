@@ -53,7 +53,6 @@ methods: {
     this.$router.push('/')
   },
   scrollToSection(sectionId) {
-    // Если мы не на главной странице - сначала переходим на неё
     if (this.$route.path !== '/') {
       this.$router.push('/').then(() => {
         this.$nextTick(() => {
