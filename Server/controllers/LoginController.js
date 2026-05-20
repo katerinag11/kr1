@@ -1,5 +1,6 @@
+// Server/controllers/LoginController.js
 const jwt = require('jsonwebtoken');
-const tableService = require('../services/TableService');
+const tablesService = require('../services/TableService');
 
 class LoginController {
   // POST /api/auth/login - авторизация
@@ -7,35 +8,37 @@ class LoginController {
     try {
       const { email, password } = req.body;
       
-      const logins = await tableService.getAll(process.env.LOGIN_TABLE_ID);
+      console.log('🔍 Поиск пользователя:', email);
       
-      const loginRecord = logins.records?.find(
-        record => record.fields.Email === email && record.fields.Password === password
-      );
+      // Ищем пользователя по email и паролю
+      const records = await tablesService.findByEmailAndPassword(email, password);
       
-      if (!loginRecord) {
+      if (!records || records.length === 0) {
         return res.status(401).json({ 
           success: false, 
           message: 'Неверный email или пароль' 
         });
       }
       
-      const userId = loginRecord.fields.UserId;
-      const users = await tableService.getAll(process.env.USER_TABLE_ID);
-      const user = users.records?.find(u => u.recordId === userId);
+      const loginRecord = records[0];
+      const userId = loginRecord.fields.UserId?.[0] || loginRecord.fields.UserId;
+      
+      // Получаем данные пользователя из таблицы Users
+      const user = await tablesService.getUserById(userId);
       
       // Генерация JWT токена
       const token = jwt.sign(
         { 
           recordId: loginRecord.recordId,
           userId: userId,
-          email: email 
+          email: email,
+          role: email === 'admin@fitcomplex.ru' ? 'admin' : 'user'
         },
         process.env.JWT_SECRET || 'fitcomplex-secret-key',
         { expiresIn: '24h' }
       );
       
-      console.log('✅ Авторизация:', email);
+      console.log('✅ Авторизация успешна:', email);
       
       res.json({
         success: true,
@@ -43,12 +46,13 @@ class LoginController {
         recordId: loginRecord.recordId,
         user: {
           recordId: userId,
-          username: user?.fields?.Username,
-          email: email
+          username: user?.fields?.Username || 'Пользователь',
+          email: email,
+          role: email === 'admin@fitcomplex.ru' ? 'admin' : 'user'
         }
       });
     } catch (error) {
-      console.error('Login error:', error);
+      console.error('❌ Login error:', error);
       res.status(500).json({ success: false, message: 'Ошибка сервера' });
     }
   }
@@ -58,65 +62,55 @@ class LoginController {
     try {
       const { username, email, password } = req.body;
       
-      const logins = await tableService.getAll(process.env.LOGIN_TABLE_ID);
-      const existingUser = logins.records?.find(
-        record => record.fields.Email === email
-      );
+      console.log('📝 Регистрация:', { username, email });
       
-      if (existingUser) {
+      // Проверяем, существует ли пользователь
+      const existing = await tablesService.findByEmail(email);
+      
+      if (existing && existing.length > 0) {
         return res.status(400).json({ 
           success: false, 
-          message: 'Пользователь уже существует' 
+          message: 'Пользователь с таким email уже существует' 
         });
       }
       
-      // Создаём запись в Users
-      const newUser = {
-        fields: {
-          Username: username,
-          DateRegistraction: new Date().toISOString()
-        }
-      };
+      // Создаём пользователя в таблице Users
+      const newUser = await tablesService.createUser(username);
       
-      const userResult = await tableService.create(process.env.USER_TABLE_ID, newUser);
-      const userId = userResult.recordId;
+      if (!newUser) {
+        throw new Error('Не удалось создать пользователя');
+      }
       
-      // Создаём запись в Login
-      const newLogin = {
-        fields: {
-          Email: email,
-          Password: password,
-          UserId: userId
-        }
-      };
-      
-      const loginResult = await tableService.create(process.env.LOGIN_TABLE_ID, newLogin);
+      // Создаём запись в таблице Login
+      const newLogin = await tablesService.createLogin(email, password, newUser.recordId);
       
       // Генерация JWT токена
       const token = jwt.sign(
         { 
-          recordId: loginResult.recordId,
-          userId: userId,
-          email: email 
+          recordId: newLogin.recordId,
+          userId: newUser.recordId,
+          email: email,
+          role: 'user'
         },
         process.env.JWT_SECRET || 'fitcomplex-secret-key',
         { expiresIn: '24h' }
       );
       
-      console.log('✅ Регистрация:', email);
+      console.log('✅ Регистрация успешна:', email);
       
       res.json({
         success: true,
         token,
-        recordId: loginResult.recordId,
+        recordId: newLogin.recordId,
         user: {
-          recordId: userId,
+          recordId: newUser.recordId,
           username: username,
-          email: email
+          email: email,
+          role: 'user'
         }
       });
     } catch (error) {
-      console.error('Register error:', error);
+      console.error('❌ Register error:', error);
       res.status(500).json({ success: false, message: 'Ошибка регистрации' });
     }
   }
@@ -130,37 +124,26 @@ class LoginController {
         return res.status(400).json({ success: false, message: 'recordId не указан' });
       }
       
-      const login = await tableService.getById(process.env.LOGIN_TABLE_ID, recordId);
+      const login = await tablesService._get(process.env.LOGIN_TABLE_ID);
+      const loginRecord = login?.records?.find(r => r.recordId === recordId);
       
-      if (!login) {
+      if (!loginRecord) {
         return res.status(404).json({ success: false, message: 'Пользователь не найден' });
       }
       
-      const userId = login.fields.UserId;
-      const user = await tableService.getById(process.env.USER_TABLE_ID, userId);
-      
-      // Генерация нового токена (опционально)
-      const token = jwt.sign(
-        { 
-          recordId: recordId,
-          userId: userId,
-          email: login?.fields?.Email 
-        },
-        process.env.JWT_SECRET || 'fitcomplex-secret-key',
-        { expiresIn: '24h' }
-      );
+      const userId = loginRecord.fields.UserId?.[0] || loginRecord.fields.UserId;
+      const user = await tablesService.getUserById(userId);
       
       res.json({
         success: true,
-        token,
         user: {
           recordId: userId,
           username: user?.fields?.Username,
-          email: login?.fields?.Email
+          email: loginRecord?.fields?.Email
         }
       });
     } catch (error) {
-      console.error('Get current user error:', error);
+      console.error('❌ Get current user error:', error);
       res.status(500).json({ success: false, message: 'Ошибка сервера' });
     }
   }
