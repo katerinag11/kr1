@@ -1,55 +1,13 @@
 const tablesService = require('../services/TableService');
 
 class LoginController {
-  // GET /api/auth/auth?email=...&password=...
-  async auth(req, res) {
-    try {
-      const { email, password } = req.query;
-      
-      console.log('Запрос на авторизацию:', { email, password });
-      
-      if (!email || !password) {
-        return res.status(400).json({ message: 'Не заполнены обязательные поля' });
-      }
-      
-      const data = await tablesService._get(
-        process.env.LOGIN_TABLE_ID,
-        `?filterByFormula=AND({Email}="${email}", {Password}="${password}")`
-      );
-      
-      const records = data.records || [];
-      
-      if (!records || records.length === 0) {
-        return res.status(400).json({ 
-          message: 'Пользователь не найден', 
-          recordId: 0 
-        });
-      }
-      
-      const userId = records[0]?.fields?.UserId?.[0] || records[0]?.fields?.UserId;
-      
-      res.status(200).json({
-        message: 'Успешная авторизация',
-        recordId: userId,
-        user: {
-          id: userId,
-          username: records[0]?.fields?.Username || 'Пользователь',
-          email: email
-        }
-      });
-    } catch (error) {
-      console.error('Ошибка при авторизации:', error);
-      res.status(500).json({ message: 'Ошибка сервера', error: error.message });
-    }
-  }
-
-  // POST /api/auth/register
   async register(req, res) {
     try {
       const { username, email, password } = req.body;
       
       console.log('Регистрация:', { username, email });
       
+      // Проверка существования пользователя
       const existing = await tablesService._get(
         process.env.LOGIN_TABLE_ID,
         `?filterByFormula={Email}="${email}"`
@@ -62,6 +20,7 @@ class LoginController {
         });
       }
       
+      // Создаём пользователя в Users
       const newUser = {
         records: [{
           fields: {
@@ -74,6 +33,7 @@ class LoginController {
       const userResult = await tablesService._post(process.env.USER_TABLE_ID, newUser);
       const userId = userResult.records?.[0]?.recordId;
       
+      // Создаём запись в Login
       const newLogin = {
         records: [{
           fields: {
@@ -101,24 +61,39 @@ class LoginController {
     }
   }
 
-  // POST /api/auth/login
   async login(req, res) {
-    const { email, password } = req.body;
-    return this.auth({ query: { email, password } }, res);
+    try {
+      const { email, password } = req.body;
+      
+      const data = await tablesService._get(
+        process.env.LOGIN_TABLE_ID,
+        `?filterByFormula=AND({Email}="${email}", {Password}="${password}")`
+      );
+      
+      const records = data.records || [];
+      
+      if (!records || records.length === 0) {
+        return res.status(400).json({ 
+          success: false, 
+          message: 'Неверный email или пароль' 
+        });
+      }
+      
+      const userId = records[0]?.fields?.UserId?.[0] || records[0]?.fields?.UserId;
+      
+      res.json({
+        success: true,
+        message: 'Успешный вход',
+        user: {
+          id: userId,
+          email: email
+        }
+      });
+    } catch (error) {
+      console.error('Ошибка входа:', error);
+      res.status(500).json({ success: false, message: error.message });
+    }
   }
 }
 
-// Важно: экспортируем не сам класс, а его методы для роутера
-const loginController = new LoginController();
-module.exports = (req, res) => {
-  if (req.method === 'POST' && req.url === '/login') {
-    return loginController.login(req, res);
-  }
-  if (req.method === 'POST' && req.url === '/register') {
-    return loginController.register(req, res);
-  }
-  if (req.method === 'GET' && req.url === '/auth') {
-    return loginController.auth(req, res);
-  }
-  res.status(404).json({ message: 'Not found' });
-};
+module.exports = new LoginController();
