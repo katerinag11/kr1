@@ -15,6 +15,7 @@ class TablesService {
 
   async _get(tableId, url = '') {
     try {
+      console.log(`📡 GET запрос к таблице: ${tableId}`);
       const response = await this.client.get(`/${tableId}/records${url}`);
       return response.data;
     } catch (error) {
@@ -25,6 +26,7 @@ class TablesService {
 
   async _post(tableId, data) {
     try {
+      console.log(`📝 POST запрос к таблице: ${tableId}`);
       const response = await this.client.post(`/${tableId}/records`, data);
       return response.data;
     } catch (error) {
@@ -35,6 +37,7 @@ class TablesService {
 
   async _put(tableId, recordId, data) {
     try {
+      console.log(`✏️ PUT запрос к таблице: ${tableId}/${recordId}`);
       const response = await this.client.put(`/${tableId}/records/${recordId}`, data);
       return response.data;
     } catch (error) {
@@ -45,6 +48,7 @@ class TablesService {
 
   async _delete(tableId, recordId) {
     try {
+      console.log(`🗑️ DELETE запрос к таблице: ${tableId}/${recordId}`);
       const response = await this.client.delete(`/${tableId}/records/${recordId}`);
       return response.data;
     } catch (error) {

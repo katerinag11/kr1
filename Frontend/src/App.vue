@@ -42,7 +42,7 @@ export default {
 }
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Segoe UI', 'Roboto', sans-serif;
   background: #f5f5f5;
 }
 </style>
