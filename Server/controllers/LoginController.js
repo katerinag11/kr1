@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 const tableService = require('../services/TableService');
 
 class LoginController {
@@ -23,10 +24,22 @@ class LoginController {
       const users = await tableService.getAll(process.env.USER_TABLE_ID);
       const user = users.records?.find(u => u.recordId === userId);
       
+      // Генерация JWT токена
+      const token = jwt.sign(
+        { 
+          recordId: loginRecord.recordId,
+          userId: userId,
+          email: email 
+        },
+        process.env.JWT_SECRET || 'fitcomplex-secret-key',
+        { expiresIn: '24h' }
+      );
+      
       console.log('✅ Авторизация:', email);
       
       res.json({
         success: true,
+        token,
         recordId: loginRecord.recordId,
         user: {
           recordId: userId,
@@ -79,10 +92,22 @@ class LoginController {
       
       const loginResult = await tableService.create(process.env.LOGIN_TABLE_ID, newLogin);
       
+      // Генерация JWT токена
+      const token = jwt.sign(
+        { 
+          recordId: loginResult.recordId,
+          userId: userId,
+          email: email 
+        },
+        process.env.JWT_SECRET || 'fitcomplex-secret-key',
+        { expiresIn: '24h' }
+      );
+      
       console.log('✅ Регистрация:', email);
       
       res.json({
         success: true,
+        token,
         recordId: loginResult.recordId,
         user: {
           recordId: userId,
@@ -114,8 +139,20 @@ class LoginController {
       const userId = login.fields.UserId;
       const user = await tableService.getById(process.env.USER_TABLE_ID, userId);
       
+      // Генерация нового токена (опционально)
+      const token = jwt.sign(
+        { 
+          recordId: recordId,
+          userId: userId,
+          email: login?.fields?.Email 
+        },
+        process.env.JWT_SECRET || 'fitcomplex-secret-key',
+        { expiresIn: '24h' }
+      );
+      
       res.json({
         success: true,
+        token,
         user: {
           recordId: userId,
           username: user?.fields?.Username,
