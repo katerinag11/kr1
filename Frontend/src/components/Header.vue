@@ -1,82 +1,55 @@
 <template>
-<header>
-  <div class="logo" @click="$router.push('/')">FitComplex</div>
-  <nav>
-    <router-link to="/">Главная</router-link>
-    <router-link to="/raspisanie">Расписание</router-link>
-    <a href="#" @click.prevent="scrollToSection('services')">Услуги</a>
-    <a href="#" @click.prevent="scrollToSection('pricing')">Тарифы</a>
-    <a href="#" @click.prevent="scrollToSection('contact')">Контакты</a>
-    <router-link v-if="!isAuth" to="/login">Вход</router-link>
+  <v-app-bar color="primary" dark>
+    <v-toolbar-title @click="$router.push('/')" style="cursor: pointer">
+      🏋️ FitComplex
+    </v-toolbar-title>
+    <v-spacer></v-spacer>
+    <v-btn text to="/">Главная</v-btn>
+    <v-btn text to="/raspisanie">Расписание</v-btn>
+    <v-btn text v-if="!isAuth" to="/login">Вход</v-btn>
+    <v-btn text v-if="!isAuth" to="/register">Регистрация</v-btn>
     <template v-else>
-      <span class="user-name">{{ user?.username }}</span>
-      <button v-if="isAdmin" @click="$router.push('/admin')" class="admin-link">Админ</button>
-      <button @click="logout" class="logout-btn">Выйти</button>
+      <v-btn text to="/profile">Профиль</v-btn>
+      <v-btn text v-if="isAdmin" to="/admin">Админ</v-btn>
+      <v-btn text @click="logout" color="error">Выйти</v-btn>
     </template>
-  </nav>
-</header>
+  </v-app-bar>
 </template>
 
 <script>
 export default {
-name: 'Header',
-data() {
-  return {
-    isAuth: false,
-    user: null
-  }
-},
-computed: {
-  isAdmin() {
-    return this.user?.role === 'admin'
-  }
-},
-mounted() {
-  this.checkAuth()
-  window.addEventListener('storage', this.checkAuth)
-},
-beforeUnmount() {
-  window.removeEventListener('storage', this.checkAuth)
-},
-methods: {
-  checkAuth() {
-    const token = localStorage.getItem('token')
-    this.isAuth = !!token
-    const userStr = localStorage.getItem('user')
-    this.user = userStr ? JSON.parse(userStr) : null
+  name: 'Header',
+  data() {
+    return {
+      isAuth: false,
+      user: null
+    }
   },
-  logout() {
-    localStorage.clear()
+  computed: {
+    isAdmin() {
+      return this.user?.role === 'admin'
+    }
+  },
+  mounted() {
     this.checkAuth()
-    this.$router.push('/')
+    window.addEventListener('storage', this.checkAuth)
   },
-  scrollToSection(sectionId) {
-    // Если мы не на главной странице - сначала переходим на неё
-    if (this.$route.path !== '/') {
-      this.$router.push('/').then(() => {
-        this.$nextTick(() => {
-          this.scrollToElement(sectionId)
-        })
-      })
-    } else {
-      this.scrollToElement(sectionId)
-    }
+  beforeUnmount() {
+    window.removeEventListener('storage', this.checkAuth)
   },
-  scrollToElement(sectionId) {
-    const element = document.getElementById(sectionId)
-    if (element) {
-      const offset = 80
-      const elementPosition = element.getBoundingClientRect().top
-      const offsetPosition = elementPosition + window.pageYOffset - offset
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      })
-    } else {
-      console.log(`Элемент с id "${sectionId}" не найден`)
+  methods: {
+    checkAuth() {
+      const token = localStorage.getItem('token')
+      this.isAuth = !!token
+      const userStr = localStorage.getItem('user')
+      this.user = userStr ? JSON.parse(userStr) : null
+    },
+    logout() {
+      localStorage.clear()
+      this.checkAuth()
+      this.$router.push('/')
     }
   }
-}
 }
 </script>
 

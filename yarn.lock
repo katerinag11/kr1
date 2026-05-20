@@ -683,6 +683,11 @@ inherits@~2.0.4:
   resolved "https://registry.npmjs.org/inherits/-/inherits-2.0.4.tgz"
   integrity sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==
 
+install@^0.13.0:
+  version "0.13.0"
+  resolved "https://registry.npmjs.org/install/-/install-0.13.0.tgz"
+  integrity sha512-zDml/jzr2PKU9I8J/xyZBQn8rPCAY//UOYNmR01XwNwyfhEWObo2SWfSl1+0tm1u6PhxLwDnfsT/6jB7OUxqFA==
+
 ipaddr.js@1.9.1:
   version "1.9.1"
   resolved "https://registry.npmjs.org/ipaddr.js/-/ipaddr.js-1.9.1.tgz"
@@ -1183,10 +1188,10 @@ vue-router@^5.0.7:
     "@vue/server-renderer" "3.5.34"
     "@vue/shared" "3.5.34"
 
-vuetify@^4.0.7:
-  version "4.0.7"
-  resolved "https://registry.npmjs.org/vuetify/-/vuetify-4.0.7.tgz"
-  integrity sha512-SV+YJkBmudY3s9qfZO2ZGUsrD0TDQU8pMBH1ERga9AEyjGvioZuXXh93V9wHxXJphvqRC2NW10Nt2lW9IZQcPw==
+vuetify@^3.12.6:
+  version "3.12.6"
+  resolved "https://registry.npmjs.org/vuetify/-/vuetify-3.12.6.tgz"
+  integrity sha512-ARfflEJu+pKk+vya059qsUT/xUnYf0K6sIZdJwVh5w+kR6CJCXMQN1MONABb3Jm2kmhN/AXB4W5/MjYiKnVAFg==
 
 webpack-virtual-modules@^0.6.2:
   version "0.6.2"
