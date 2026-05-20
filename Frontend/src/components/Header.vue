@@ -7,15 +7,18 @@
       
       <v-spacer></v-spacer>
       
-      <v-btn text to="/" class="nav-btn">Главная</v-btn>
-      <v-btn text to="/raspisanie" class="nav-btn">Расписание</v-btn>
-      <v-btn text v-if="!isAuth" to="/login" class="nav-btn">Вход</v-btn>
-      <v-btn text v-if="!isAuth" to="/register" class="nav-btn register-btn">Регистрация</v-btn>
+      <router-link to="/" class="nav-link" :class="{ active: $route.path === '/' }">Главная</router-link>
+      <router-link to="/raspisanie" class="nav-link" :class="{ active: $route.path === '/raspisanie' }">Расписание</router-link>
+      
+      <template v-if="!isAuth">
+        <router-link to="/login" class="nav-link" :class="{ active: $route.path === '/login' }">Вход</router-link>
+        <router-link to="/register" class="nav-link register-link" :class="{ active: $route.path === '/register' }">Регистрация</router-link>
+      </template>
       
       <template v-else>
-        <v-btn text to="/profile" class="nav-btn">Профиль</v-btn>
-        <v-btn text v-if="isAdmin" to="/admin" class="nav-btn">Админ</v-btn>
-        <v-btn text @click="logout" color="error" class="logout-btn">Выйти</v-btn>
+        <router-link to="/profile" class="nav-link" :class="{ active: $route.path === '/profile' }">Профиль</router-link>
+        <router-link v-if="isAdmin" to="/admin" class="nav-link" :class="{ active: $route.path === '/admin' }">Админ</router-link>
+        <button @click="logout" class="logout-btn">Выйти</button>
       </template>
     </v-container>
   </v-app-bar>
@@ -69,20 +72,49 @@ export default {
   letter-spacing: 1px;
 }
 
-.nav-btn {
-  text-transform: none;
+.nav-link {
+  text-decoration: none;
+  color: rgba(255,255,255,0.85);
   font-weight: 500;
   margin: 0 4px;
+  padding: 8px 16px;
+  border-radius: 50px;
+  transition: all 0.3s;
 }
 
-.register-btn {
+.nav-link:hover {
+  color: white;
   background: rgba(255,255,255,0.15);
-  border-radius: 20px;
+}
+
+.nav-link.active {
+  color: white;
+  background: rgba(255,255,255,0.25);
+  font-weight: 600;
+}
+
+.register-link {
+  background: rgba(255,255,255,0.1);
+}
+
+.register-link:hover {
+  background: rgba(255,255,255,0.2);
 }
 
 .logout-btn {
-  text-transform: none;
+  background: rgba(255,255,255,0.15);
+  border: none;
+  color: white;
   font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 0.9rem;
+}
+
+.logout-btn:hover {
+  background: rgba(255,255,255,0.3);
 }
 
 .v-app-bar {

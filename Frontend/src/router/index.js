@@ -6,6 +6,8 @@ const routes = [
   { path: '/raspisanie', name: 'raspisanie', component: () => import('../pages/RaspisaniePage.vue') },
   { path: '/login', name: 'login', component: () => import('../pages/LoginPage.vue') },
   { path: '/register', name: 'register', component: () => import('../pages/RegisterPage.vue') },
+  { path: '/profile', name: 'profile', component: () => import('../pages/UserProfile.vue') },
+  { path: '/admin', name: 'admin', component: () => import('../pages/AdminPanel.vue') },
   { path: '/service/gym', name: 'gym', component: () => import('../pages/GymPage.vue') },
   { path: '/service/group', name: 'group', component: () => import('../pages/GroupPage.vue') },
   { path: '/service/personal', name: 'personal', component: () => import('../pages/PersonalPage.vue') },
@@ -15,8 +17,8 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
-  scrollBehavior(to, from, savedPosition) {
-    return { top: 0, behavior: 'smooth' }
+  scrollBehavior() {
+    return { top: 0 }
   }
 })
 
