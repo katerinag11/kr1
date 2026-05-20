@@ -12,7 +12,7 @@ app.use(express.json());
 // Контроллер
 const LoginController = require('./controllers/LoginController');
 
-// ✅ ПРАВИЛЬНЫЕ МАРШРУТЫ (POST, не GET!)
+// Маршруты
 app.post('/api/auth/register', (req, res) => LoginController.register(req, res));
 app.post('/api/auth/login', (req, res) => LoginController.login(req, res));
 
