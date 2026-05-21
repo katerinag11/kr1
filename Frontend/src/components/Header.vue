@@ -17,7 +17,7 @@
       
       <template v-else>
         <router-link to="/profile" class="nav-link" :class="{ active: $route.path === '/profile' }">Профиль</router-link>
-        <router-link v-if="isAdminUser" to="/admin" class="nav-link" :class="{ active: $route.path === '/admin' }">Админ</router-link>
+        <router-link v-if="isAdmin" to="/admin" class="nav-link" :class="{ active: $route.path === '/admin' }">Админ</router-link>
         <button @click="logout" class="logout-btn">Выйти</button>
       </template>
     </v-container>
@@ -25,20 +25,18 @@
 </template>
 
 <script>
-import { clearAuth, getStoredUser, isAuthenticated, isAdmin } from '../utils/auth'
-
 export default {
   name: 'Header',
   data() {
     return {
       isAuth: false,
-      user: null,
+      user: null
     }
   },
   computed: {
-    isAdminUser() {
-      return isAdmin()
-    },
+    isAdmin() {
+      return this.user?.role === 'admin'
+    }
   },
   mounted() {
     this.checkAuth()
@@ -49,15 +47,17 @@ export default {
   },
   methods: {
     checkAuth() {
-      this.isAuth = isAuthenticated()
-      this.user = getStoredUser()
+      const token = localStorage.getItem('token')
+      this.isAuth = !!token
+      const userStr = localStorage.getItem('user')
+      this.user = userStr ? JSON.parse(userStr) : null
     },
     logout() {
-      clearAuth()
+      localStorage.clear()
       this.checkAuth()
       this.$router.push('/')
-    },
-  },
+    }
+  }
 }
 </script>
 

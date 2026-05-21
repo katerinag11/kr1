@@ -1,38 +1,20 @@
 const tablesService = require('../services/TableService');
 
 class UserController {
-  async getAllUsers(req, res) {
+  async get(req, res) {
     try {
-      const [usersData, loginsData] = await Promise.all([
-        tablesService._get(process.env.USER_TABLE_ID),
-        tablesService._get(process.env.LOGIN_TABLE_ID),
-      ]);
-
-      const loginByUserRecordId = new Map();
-      for (const login of loginsData.records) {
-        const linkedIds = login.fields?.UserId;
-        const ids = Array.isArray(linkedIds) ? linkedIds : linkedIds ? [linkedIds] : [];
-        for (const userRecordId of ids) {
-          loginByUserRecordId.set(userRecordId, login);
-        }
-      }
-
-      const users = usersData.records.map((record) => {
-        const login = loginByUserRecordId.get(record.recordId);
-        return {
-          id: record.recordId,
-          username: record.fields?.Username || login?.fields?.Login || '—',
-          email: login?.fields?.Email || '—',
-          subscription: record.fields?.Subscription || record.fields?.Абонемент || 'none',
-        };
-      });
-
-      res.json({ success: true, data: users });
+      const users = await tablesService._get(process.env.USER_TABLE_ID);
+      res.json(users);
     } catch (error) {
-      console.error('Ошибка загрузки пользователей:', error);
-      res.status(500).json({ success: false, message: error.message });
+      res.status(500).json({ error: error.message });
     }
   }
 }
 
-module.exports = new UserController();
+const userController = new UserController();
+module.exports = (req, res) => {
+  if (req.method === 'GET') {
+    return userController.get(req, res);
+  }
+  res.status(404).json({ message: 'Not found' });
+};

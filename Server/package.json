@@ -4,8 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js",
-    "ensure-admin": "node scripts/ensureAdmin.js"
+    "dev": "nodemon index.js"
   },
   "dependencies": {
     "axios": "^1.16.1",

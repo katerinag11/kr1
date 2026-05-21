@@ -135,7 +135,6 @@
 
 <script>
 import api from '../api'
-import { clearAuth, isAdmin } from '../utils/auth'
 
 export default {
   name: 'AdminPanel',
@@ -157,10 +156,6 @@ export default {
     }
   },
   mounted() {
-    if (!isAdmin()) {
-      this.$router.replace('/login?redirect=/admin')
-      return
-    }
     this.loadBookings()
     this.loadUsers()
   },
@@ -234,8 +229,7 @@ export default {
       return new Date(date).toLocaleString('ru-RU')
     },
     logout() {
-      clearAuth()
-      window.dispatchEvent(new Event('storage'))
+      localStorage.clear()
       this.$router.push('/login')
     }
   }
