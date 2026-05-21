@@ -1,12 +1,12 @@
 const tablesService = require('../services/TableService');
 
 class LoginController {
-  // POST /api/auth/register
+
   async register(req, res) {
     try {
       const { username, email, password } = req.body;
       
-      console.log('📝 Регистрация:', { username, email });
+      console.log('Регистрация:', { username, email });
       
       if (!username || !email || !password) {
         return res.status(400).json({ 
@@ -15,7 +15,6 @@ class LoginController {
         });
       }
       
-      // Проверка существования пользователя в MWS
       const existing = await tablesService._get(
         process.env.LOGIN_TABLE_ID,
         `?filterByFormula={Email}="${email}"`
@@ -64,7 +63,7 @@ class LoginController {
         }
       });
     } catch (error) {
-      console.error('❌ Ошибка регистрации:', error);
+      console.error('Ошибка регистрации:', error);
       res.status(500).json({ 
         success: false, 
         message: error.message || 'Ошибка сервера' 
@@ -77,7 +76,7 @@ class LoginController {
     try {
       const { email, password } = req.body;
       
-      console.log('🔑 Вход:', email);
+      console.log('Вход:', email);
       
       // Поиск в MWS Tables
       const data = await tablesService._get(
@@ -108,7 +107,7 @@ class LoginController {
         }
       });
     } catch (error) {
-      console.error('❌ Ошибка входа:', error);
+      console.error(' Ошибка входа:', error);
       res.status(500).json({ 
         success: false, 
         message: error.message || 'Ошибка сервера' 
