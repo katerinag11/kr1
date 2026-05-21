@@ -60,14 +60,26 @@
             email: this.email,
             password: this.password
           })
-          if (response.data.success) {
-            localStorage.setItem('token', response.data.token)
-            localStorage.setItem('user', JSON.stringify(response.data.user))
-            window.dispatchEvent(new Event('storage'))
-            this.$router.push('/')
+          const data = response.data
+          if (!data?.success) {
+            this.error = data?.message || 'Ошибка регистрации'
+            return
           }
+          if (!data.user?.id) {
+            this.error =
+              'Сервер ответил без ID пользователя. Перезапустите API: node Server/index.js'
+            return
+          }
+          localStorage.setItem('token', data.token || 'token-' + Date.now())
+          localStorage.setItem('user', JSON.stringify(data.user))
+          window.dispatchEvent(new Event('storage'))
+          this.$router.push('/')
         } catch (err) {
-          this.error = err.response?.data?.message || 'Ошибка регистрации'
+          const msg = err.response?.data?.message || err.message
+          this.error =
+            msg === 'Network Error'
+              ? 'Не удалось связаться с сервером. Запустите: node Server/index.js'
+              : msg || 'Ошибка регистрации'
         } finally {
           this.loading = false
         }

@@ -47,7 +47,14 @@
             localStorage.setItem('token', response.data.token)
             localStorage.setItem('user', JSON.stringify(response.data.user))
             window.dispatchEvent(new Event('storage'))
-            this.$router.push('/')
+            const redirect = this.$route.query.redirect
+            if (response.data.user?.role === 'admin') {
+              this.$router.push(redirect && String(redirect).startsWith('/admin') ? redirect : '/admin')
+            } else if (redirect) {
+              this.$router.push(redirect)
+            } else {
+              this.$router.push('/')
+            }
           }
         } catch (err) {
           this.error = err.response?.data?.message || 'Ошибка входа'

@@ -1,14 +1,13 @@
 <template>
   <div class="user-profile">
     <div class="profile-header">
-      <h1>👤 Личный кабинет</h1>
+      <h1>Личный кабинет</h1>
       <button class="logout-btn" @click="logout">Выйти</button>
     </div>
 
     <div class="profile-content">
-      <!-- Информация о пользователе -->
       <div class="profile-card">
-        <h2>📋 Мои данные</h2>
+        <h2> Мои данные</h2>
         <div class="user-info">
           <div class="info-row">
             <span class="label">Имя:</span>
@@ -25,9 +24,9 @@
         </div>
       </div>
 
-      <!-- Мой абонемент -->
+
       <div class="subscription-card">
-        <h2>🎫 Мой абонемент</h2>
+        <h2>Мой абонемент</h2>
         <div v-if="user.subscription && user.subscription !== 'none'" class="subscription-info">
           <div class="sub-name">{{ getUserSubscriptionName() }}</div>
           <div class="sub-price">{{ getUserSubscriptionPrice() }} ₽/мес</div>
@@ -41,16 +40,15 @@
           </div>
         </div>
         <div v-else class="no-subscription">
-          <p>😕 У вас нет активного абонемента</p>
+          <p> У вас нет активного абонемента</p>
           <button class="buy-btn" @click="goToTariffs">
-            🎟️ Выбрать абонемент
+            Выбрать абонемент
           </button>
         </div>
       </div>
 
-      <!-- Мои тренировки -->
       <div class="schedule-card">
-        <h2>📅 Мои тренировки</h2>
+        <h2> Мои тренировки</h2>
         <div class="schedule-filters">
           <button 
             v-for="filter in filters" 
@@ -65,9 +63,9 @@
 
         <div class="bookings-list">
           <div v-if="filteredBookings.length === 0" class="empty-schedule">
-            <p>📭 У вас пока нет запланированных тренировок</p>
+            <p>У вас пока нет запланированных тренировок</p>
             <button class="book-btn" @click="goToSchedule">
-              📅 Записаться на тренировку
+              Записаться на тренировку
             </button>
           </div>
           <div v-else class="booking-items">
@@ -98,9 +96,9 @@ export default {
       filters: ['Все', 'Активные', 'Завершённые'],
       bookings: [],
       subscriptionsList: [
-        { id: 1, name: 'Старт', price: '1 900', features: ['🏋️ Тренажёрный зал', '📱 Мобильное приложение', '💪 Вводная тренировка'] },
-        { id: 2, name: 'Премиум', price: '2 999', features: ['🏋️ Тренажёрный зал', '🧘 Групповые тренировки', '💆 СПА-зона', '👥 Гостевой доступ', '📹 Видеотренировки'] },
-        { id: 3, name: 'Семейный', price: '4 500', features: ['👨‍👩‍👧‍👦 Доступ для 2-х', '✨ Все преимущества Премиум', '💰 Скидка 20%', '⭐ Приоритетная запись'] }
+        { id: 1, name: 'Старт', price: '1 900', features: [' Тренажёрный зал', ' Мобильное приложение', ' Вводная тренировка'] },
+        { id: 2, name: 'Премиум', price: '2 999', features: ['Тренажёрный зал', ' Групповые тренировки', 'СПА-зона', ' Гостевой доступ', ' Видеотренировки'] },
+        { id: 3, name: 'Семейный', price: '4 500', features: ['Доступ для 2-х', ' Все преимущества Премиум', ' Скидка 20%', ' Приоритетная запись'] }
       ],
       subscriptionValidUntil: '15.07.2026'
     }

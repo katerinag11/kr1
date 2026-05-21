@@ -11,7 +11,7 @@
         :class="{ active: activeTab === 'bookings' }" 
         @click="activeTab = 'bookings'"
       >
-        📋 Заявки
+         Заявки
         <span v-if="newBookingsCount" class="badge">{{ newBookingsCount }}</span>
       </button>
       <button 
@@ -19,18 +19,17 @@
         :class="{ active: activeTab === 'subscriptions' }" 
         @click="activeTab = 'subscriptions'"
       >
-        🎫 Абонементы
+         Абонементы
       </button>
       <button 
         class="tab-btn" 
         :class="{ active: activeTab === 'users' }" 
         @click="activeTab = 'users'"
       >
-        👥 Пользователи
+         Пользователи
       </button>
     </div>
 
-    <!-- Вкладка: Заявки -->
     <div v-show="activeTab === 'bookings'" class="bookings-section">
       <div class="section-header">
         <h2>Заявки от клиентов</h2>
@@ -62,10 +61,10 @@
               <td>{{ booking.training || 'Не указана' }}</td>
               <td>
                 <select v-model="booking.status" @change="updateBookingStatus(booking)" class="status-select">
-                  <option value="new">🆕 Новая</option>
-                  <option value="confirmed">✅ Подтверждена</option>
-                  <option value="completed">✔️ Завершена</option>
-                  <option value="cancelled">❌ Отменена</option>
+                  <option value="new">Новая</option>
+                  <option value="confirmed"> Подтверждена</option>
+                  <option value="completed"> Завершена</option>
+                  <option value="cancelled"> Отменена</option>
                 </select>
               </td>
               <td>
@@ -77,7 +76,6 @@
       </div>
     </div>
 
-    <!-- Вкладка: Абонементы -->
     <div v-show="activeTab === 'subscriptions'" class="subscriptions-section">
       <div class="section-header">
         <h2>Управление абонементами</h2>
@@ -99,7 +97,6 @@
       </div>
     </div>
 
-    <!-- Вкладка: Пользователи -->
     <div v-show="activeTab === 'users'" class="users-section">
       <div class="section-header">
         <h2>Управление пользователями</h2>
@@ -138,6 +135,7 @@
 
 <script>
 import api from '../api'
+import { clearAuth, isAdmin } from '../utils/auth'
 
 export default {
   name: 'AdminPanel',
@@ -159,6 +157,10 @@ export default {
     }
   },
   mounted() {
+    if (!isAdmin()) {
+      this.$router.replace('/login?redirect=/admin')
+      return
+    }
     this.loadBookings()
     this.loadUsers()
   },
@@ -232,7 +234,8 @@ export default {
       return new Date(date).toLocaleString('ru-RU')
     },
     logout() {
-      localStorage.clear()
+      clearAuth()
+      window.dispatchEvent(new Event('storage'))
       this.$router.push('/login')
     }
   }
