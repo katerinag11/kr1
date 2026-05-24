@@ -138,10 +138,10 @@ export default {
       } catch (error) {
         // Тестовые данные для демонстрации
         this.bookings = [
-          { id: 1, date: '22.05.2026', time: '18:00', training: '🧘 Йога', status: 'confirmed' },
-          { id: 2, date: '24.05.2026', time: '19:00', training: '💪 Кроссфит', status: 'confirmed' },
-          { id: 3, date: '26.05.2026', time: '10:00', training: '🧘‍♀️ Пилатес', status: 'completed' },
-          { id: 4, date: '28.05.2026', time: '17:00', training: '💃 Танцы', status: 'new' }
+          { id: 1, date: '22.05.2026', time: '18:00', training: ' Йога', status: 'confirmed' },
+          { id: 2, date: '24.05.2026', time: '19:00', training: ' Кроссфит', status: 'confirmed' },
+          { id: 3, date: '26.05.2026', time: '10:00', training: ' Пилатес', status: 'completed' },
+          { id: 4, date: '28.05.2026', time: '17:00', training: ' Танцы', status: 'new' }
         ]
       }
     },
@@ -169,10 +169,10 @@ export default {
     },
     getStatusText(status) {
       const statuses = { 
-        new: '🆕 Новая', 
-        confirmed: '✅ Активная', 
-        completed: '✔️ Завершена',
-        cancelled: '❌ Отменена'
+        new: ' Новая', 
+        confirmed: ' Активная', 
+        completed: ' Завершена',
+        cancelled: ' Отменена'
       }
       return statuses[status] || status
     },
