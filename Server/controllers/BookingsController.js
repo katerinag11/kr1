@@ -1,8 +1,7 @@
 class BookingsController {
-  // GET /api/bookings - получить все заявки
   async get(req, res) {
     try {
-      console.log('📋 Запрос на получение заявок');
+      console.log('Запрос на получение заявок');
       
       if (!global.bookings) {
         global.bookings = [];
@@ -18,12 +17,11 @@ class BookingsController {
     }
   }
 
-  // POST /api/bookings - создать новую заявку
   async post(req, res) {
     try {
       const { name, phone, training } = req.body;
       
-      console.log('📝 Новая заявка:', { name, phone, training });
+      console.log(' Новая заявка:', { name, phone, training });
       
       if (!name || !phone) {
         return res.status(400).json({ 
@@ -47,7 +45,7 @@ class BookingsController {
       
       global.bookings.push(newBooking);
       
-      console.log('✅ Заявка сохранена, всего заявок:', global.bookings.length);
+      console.log(' Заявка сохранена, всего заявок:', global.bookings.length);
       
       res.json({ 
         success: true, 
@@ -60,7 +58,6 @@ class BookingsController {
     }
   }
 
-  // PUT /api/bookings/:id - обновить статус заявки
   async put(req, res) {
     try {
       const { id } = req.params;
@@ -69,7 +66,7 @@ class BookingsController {
       const booking = global.bookings?.find(b => b.id == id);
       if (booking) {
         booking.status = status;
-        console.log('✏️ Статус заявки обновлён:', id, status);
+        console.log(' Статус заявки обновлён:', id, status);
       }
       
       res.json({ success: true });
@@ -78,12 +75,12 @@ class BookingsController {
     }
   }
 
-  // DELETE /api/bookings/:id - удалить заявку
+
   async delete(req, res) {
     try {
       const { id } = req.params;
       global.bookings = global.bookings?.filter(b => b.id != id) || [];
-      console.log('🗑️ Заявка удалена:', id);
+      console.log(' Заявка удалена:', id);
       res.json({ success: true });
     } catch (error) {
       res.status(500).json({ success: false, message: error.message });
