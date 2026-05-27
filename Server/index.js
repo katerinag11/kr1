@@ -12,11 +12,14 @@ app.use(express.json());
 
 const LoginController = require('./controllers/LoginController');
 const BookingsController = require('./controllers/BookingsController');
+const UserController = require('./controllers/UserController');
 
 
 app.post('/api/auth/register', (req, res) => LoginController.register(req, res));
 app.post('/api/auth/login', (req, res) => LoginController.login(req, res));
 
+app.get('/api/users', (req, res) => UserController.getAllUsers(req, res));
+app.put('/api/users/:id', (req, res) => UserController.updateUser(req, res));
 
 app.get('/api/bookings', (req, res) => BookingsController.get(req, res));
 app.post('/api/bookings', (req, res) => BookingsController.post(req, res));

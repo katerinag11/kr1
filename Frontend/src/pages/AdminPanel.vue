@@ -109,6 +109,7 @@
               <th>ID</th>
               <th>Имя</th>
               <th>Email</th>
+              <th>Роль</th>
               <th>Абонемент</th>
             </tr>
           </thead>
@@ -117,6 +118,7 @@
               <td>{{ user.id }}</td>
               <td>{{ user.username }}</td>
               <td>{{ user.email }}</td>
+              <td>{{ user.role || 'user' }}</td>
               <td>
                 <select v-model="user.subscription" @change="updateUserSubscription(user)" class="sub-select">
                   <option value="none">Нет абонемента</option>
@@ -203,8 +205,14 @@ export default {
         }
       }
     },
-    updateUserSubscription(user) {
-      console.log('Абонемент обновлён:', user)
+    async updateUserSubscription(user) {
+      try {
+        const response = await api.put(`/users/${user.id}`, { subscription: user.subscription })
+        const updatedUser = response.data.data
+        this.users = this.users.map((item) => item.id === updatedUser.id ? updatedUser : item)
+      } catch (error) {
+        console.error('Ошибка обновления абонемента:', error)
+      }
     },
     editSubscription(sub) {
       const newName = prompt('Новое название:', sub.name)

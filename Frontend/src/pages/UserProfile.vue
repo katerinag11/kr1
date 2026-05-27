@@ -7,7 +7,10 @@
 
     <div class="profile-content">
       <div class="profile-card">
-        <h2> Мои данные</h2>
+        <div class="profile-card-header">
+          <h2> Мои данные</h2>
+          <button class="edit-btn" v-if="!editMode" @click="startEdit">Редактировать</button>
+        </div>
         <div class="profile-completion">
           <span class="completion-label">Профиль заполнен на</span>
           <div class="completion-bar">
@@ -15,7 +18,56 @@
           </div>
           <span class="completion-value">{{ getProfileCompletion() }}%</span>
         </div>
-        <div class="user-info">
+
+        <div v-if="editMode" class="profile-edit-form">
+          <div class="form-row">
+            <label>Имя</label>
+            <input v-model="profileForm.username" type="text" />
+          </div>
+          <div class="form-row">
+            <label>Email</label>
+            <input v-model="profileForm.email" type="email" />
+          </div>
+          <div class="form-row">
+            <label>Телефон</label>
+            <input v-model="profileForm.phone" type="text" />
+          </div>
+          <div class="form-row">
+            <label>Город</label>
+            <input v-model="profileForm.city" type="text" />
+          </div>
+          <div class="form-row">
+            <label>Цель</label>
+            <input v-model="profileForm.goal" type="text" />
+          </div>
+          <div class="form-row">
+            <label>Рост</label>
+            <input v-model.number="profileForm.height" type="number" min="0" />
+          </div>
+          <div class="form-row">
+            <label>Вес</label>
+            <input v-model.number="profileForm.weight" type="number" min="0" />
+          </div>
+          <div class="form-row">
+            <label>Дата рождения</label>
+            <input v-model="profileForm.birthday" type="text" placeholder="ДД.MM.ГГГГ" />
+          </div>
+          <div class="form-row">
+            <label>Пол</label>
+            <select v-model="profileForm.gender">
+              <option>Мужской</option>
+              <option>Женский</option>
+              <option>Не указан</option>
+            </select>
+          </div>
+          <div class="actions-row">
+            <button class="save-btn" @click="saveProfile" :disabled="saving">{{ saving ? 'Сохранение...' : 'Сохранить' }}</button>
+            <button class="cancel-btn" @click="cancelEdit" type="button">Отмена</button>
+          </div>
+          <div v-if="profileMessage" class="profile-message">{{ profileMessage }}</div>
+        </div>
+
+        <div v-else class="user-info">
           <div class="info-row">
             <span class="label">Имя:</span>
             <span class="value">{{ user.username || 'Не указано' }}</span>
@@ -127,6 +179,10 @@ export default {
   data() {
     return {
       user: {},
+      profileForm: {},
+      editMode: false,
+      saving: false,
+      profileMessage: '',
       activeFilter: 'Все',
       filters: ['Все', 'Активные', 'Завершённые'],
       bookings: [],
@@ -172,6 +228,7 @@ export default {
       } else {
         this.user = defaultUser
       }
+      this.profileForm = { ...this.user }
     },
     async loadUserBookings() {
       try {
@@ -222,6 +279,50 @@ export default {
         cancelled: ' Отменена'
       }
       return statuses[status] || status
+    },
+    startEdit() {
+      this.editMode = true
+      this.profileMessage = ''
+      this.profileForm = { ...this.user }
+    },
+    cancelEdit() {
+      this.editMode = false
+      this.profileMessage = ''
+      this.profileForm = { ...this.user }
+    },
+    async saveProfile() {
+      if (!this.user.id) {
+        this.profileMessage = 'Невозможно сохранить профиль: отсутствует ID пользователя.'
+        return
+      }
+      this.saving = true
+      this.profileMessage = ''
+      try {
+        const response = await api.put(`/users/${this.user.id}`, {
+          username: this.profileForm.username,
+          email: this.profileForm.email,
+          phone: this.profileForm.phone,
+          city: this.profileForm.city,
+          goal: this.profileForm.goal,
+          height: this.profileForm.height,
+          weight: this.profileForm.weight,
+          birthday: this.profileForm.birthday,
+          gender: this.profileForm.gender
+        })
+
+        if (response.data.success) {
+          this.user = { ...this.user, ...response.data.data }
+          localStorage.setItem('user', JSON.stringify(this.user))
+          this.editMode = false
+          this.profileMessage = 'Профиль успешно сохранён'
+        } else {
+          this.profileMessage = response.data.message || 'Не удалось сохранить профиль'
+        }
+      } catch (error) {
+        this.profileMessage = error.response?.data?.message || error.message || 'Ошибка сохранения профиля'
+      } finally {
+        this.saving = false
+      }
     },
     getProfileCompletion() {
       const fields = ['username', 'email', 'date', 'phone', 'city', 'goal', 'height', 'weight', 'birthday', 'gender']
@@ -328,6 +429,76 @@ export default {
 
 .completion-label {
   color: #4a5568;
+  font-weight: 600;
+}
+
+.profile-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.edit-btn,
+.save-btn,
+.cancel-btn {
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 18px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.edit-btn:hover,
+.save-btn:hover {
+  background: #5469d4;
+}
+
+.cancel-btn {
+  background: #a0aec0;
+}
+
+.cancel-btn:hover {
+  background: #718096;
+}
+
+.profile-edit-form {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.form-row {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.form-row label {
+  font-weight: 600;
+  color: #4a5568;
+}
+
+.form-row input,
+.form-row select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 1rem;
+}
+
+.actions-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.profile-message {
+  color: #16a34a;
   font-weight: 600;
 }
 
