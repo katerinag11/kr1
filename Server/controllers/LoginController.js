@@ -1,4 +1,7 @@
-const tablesService = require('../services/TableService');
+const fs = require('fs').promises;
+const path = require('path');
+
+const usersFilePath = path.join(__dirname, '../data/users.json');
 
 class LoginController {
 
@@ -15,12 +18,10 @@ class LoginController {
         });
       }
       
-      const existing = await tablesService._get(
-        process.env.LOGIN_TABLE_ID,
-        `?filterByFormula={Email}="${email}"`
-      );
-      
-      if (existing.records && existing.records.length > 0) {
+      const usersFile = await fs.readFile(usersFilePath, 'utf-8');
+      const usersData = JSON.parse(usersFile);
+      const existing = usersData.users.find((user) => user.email.toLowerCase() === email.toLowerCase());
+      if (existing) {
         return res.status(400).json({ 
           success: false, 
           message: 'Пользователь уже существует' 
@@ -29,37 +30,41 @@ class LoginController {
       
       // Создаём пользователя в таблице Users
       const newUser = {
-        records: [{
-          fields: {
-            Username: username,
-            DateRegistraction: new Date().toISOString()
-          }
-        }]
+        id: `user-${Date.now()}`,
+        username,
+        email,
+        password,
+        role: 'user',
+        subscription: 'Старт',
+        date: new Date().toLocaleDateString('ru-RU'),
+        phone: '+7 (900) 000-00-00',
+        city: 'Не указан',
+        goal: 'Поддерживать форму',
+        height: 175,
+        weight: 70,
+        birthday: '01.01.1990',
+        gender: 'Не указан'
       };
-      
-      const userResult = await tablesService._post(process.env.USER_TABLE_ID, newUser);
-      const userId = userResult.records?.[0]?.recordId;
-      
-      // Создаём запись в таблице Login
-      const newLogin = {
-        records: [{
-          fields: {
-            Email: email,
-            Password: password,
-            UserId: [userId]
-          }
-        }]
-      };
-      
-      await tablesService._post(process.env.LOGIN_TABLE_ID, newLogin);
+      usersData.users.push(newUser);
+      await fs.writeFile(usersFilePath, JSON.stringify(usersData, null, 2), 'utf-8');
       
       res.json({
         success: true,
         message: 'Регистрация успешна',
         user: {
-          id: userId,
-          username: username,
-          email: email
+          id: newUser.id,
+          username: newUser.username,
+          email: newUser.email,
+          role: newUser.role,
+          subscription: newUser.subscription,
+          date: newUser.date,
+          phone: newUser.phone,
+          city: newUser.city,
+          goal: newUser.goal,
+          height: newUser.height,
+          weight: newUser.weight,
+          birthday: newUser.birthday,
+          gender: newUser.gender
         }
       });
     } catch (error) {
@@ -78,32 +83,40 @@ class LoginController {
       
       console.log('Вход:', email);
       
-      // Поиск в MWS Tables
-      const data = await tablesService._get(
-        process.env.LOGIN_TABLE_ID,
-        `?filterByFormula=AND({Email}="${email}", {Password}="${password}")`
-      );
+      const usersFile = await fs.readFile(usersFilePath, 'utf-8');
+      const usersData = JSON.parse(usersFile);
+      const user = usersData.users.find((candidate) => {
+        return (
+          candidate.email.toLowerCase() === email.toLowerCase() &&
+          candidate.password === password
+        )
+      });
       
-      const records = data.records || [];
-      
-      if (!records || records.length === 0) {
+      if (!user) {
         return res.status(401).json({ 
           success: false, 
           message: 'Неверный email или пароль' 
         });
       }
-      
-      const userId = records[0]?.fields?.UserId?.[0] || records[0]?.fields?.UserId;
-      const isAdmin = email === 'admin@fitcomplex.ru';
+      const isAdmin = user.role === 'admin';
       
       res.json({
         success: true,
         token: 'token-' + Date.now(),
         user: {
-          id: userId,
-          username: records[0]?.fields?.Username || email.split('@')[0],
+          id: user.id,
+          username: user.username,
           email: email,
-          role: isAdmin ? 'admin' : 'user'
+           role: isAdmin ? 'admin' : 'user',
+           subscription: user.subscription,
+           date: user.date,
+           phone: user.phone,
+           city: user.city,
+           goal: user.goal,
+           height: user.height,
+           weight: user.weight,
+           birthday: user.birthday,
+           gender: user.gender
         }
       });
     } catch (error) {

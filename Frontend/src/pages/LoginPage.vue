@@ -22,7 +22,7 @@
   </template>
   
   <script>
-  import { loginWithJson } from '../services/authService'
+    import api from '../api'
   
   export default {
     name: 'LoginPage',
@@ -39,10 +39,13 @@
         this.loading = true
         this.error = ''
         try {
-          const response = await loginWithJson(this.email, this.password)
+          const response = await api.post('/auth/login', {
+            email: this.email,
+            password: this.password
+          })
 
-          localStorage.setItem('token', response.token)
-          localStorage.setItem('user', JSON.stringify(response.user))
+          localStorage.setItem('token', response.data.token)
+          localStorage.setItem('user', JSON.stringify(response.data.user))
           window.dispatchEvent(new Event('storage'))
           this.$router.push('/')
         } catch (err) {
