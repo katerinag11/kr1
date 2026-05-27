@@ -8,6 +8,13 @@
     <div class="profile-content">
       <div class="profile-card">
         <h2> Мои данные</h2>
+        <div class="profile-completion">
+          <span class="completion-label">Профиль заполнен на</span>
+          <div class="completion-bar">
+            <div class="completion-fill" :style="{ width: getProfileCompletion() + '%' }"></div>
+          </div>
+          <span class="completion-value">{{ getProfileCompletion() }}%</span>
+        </div>
         <div class="user-info">
           <div class="info-row">
             <span class="label">Имя:</span>
@@ -20,6 +27,34 @@
           <div class="info-row">
             <span class="label">Дата регистрации:</span>
             <span class="value">{{ user.date || '20.05.2026' }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Телефон:</span>
+            <span class="value">{{ user.phone || 'Не указан' }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Город:</span>
+            <span class="value">{{ user.city || 'Не указан' }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Цель:</span>
+            <span class="value">{{ user.goal || 'Не указана' }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Рост:</span>
+            <span class="value">{{ user.height ? user.height + ' см' : 'Не указан' }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Вес:</span>
+            <span class="value">{{ user.weight ? user.weight + ' кг' : 'Не указан' }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Дата рождения:</span>
+            <span class="value">{{ user.birthday || 'Не указана' }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Пол:</span>
+            <span class="value">{{ user.gender || 'Не указан' }}</span>
           </div>
         </div>
       </div>
@@ -118,15 +153,24 @@ export default {
   methods: {
     loadUserData() {
       const userData = localStorage.getItem('user')
+      const defaultUser = {
+        username: 'Гость',
+        email: 'guest@fitcomplex.ru',
+        date: '20.05.2026',
+        subscription: 'Премиум',
+        phone: '+7 (900) 000-00-00',
+        city: 'Москва',
+        goal: 'Поддерживать форму',
+        height: 175,
+        weight: 70,
+        birthday: '01.01.1990',
+        gender: 'Не указан'
+      }
+
       if (userData) {
-        this.user = JSON.parse(userData)
+        this.user = { ...defaultUser, ...JSON.parse(userData) }
       } else {
-        this.user = {
-          username: 'Гость',
-          email: 'guest@fitcomplex.ru',
-          date: '20.05.2026',
-          subscription: 'premium'
-        }
+        this.user = defaultUser
       }
     },
     async loadUserBookings() {
@@ -147,24 +191,27 @@ export default {
     },
     getUserSubscriptionName() {
       if (!this.user.subscription || this.user.subscription === 'none') return 'Нет абонемента'
-      const sub = this.subscriptionsList.find(s => 
-        s.name.toLowerCase() === this.user.subscription.toLowerCase() ||
-        s.name === this.user.subscription
-      )
+      const sub = this.subscriptionsList.find(s => {
+        const normalizedCurrent = String(this.user.subscription).toLowerCase().replace(/\s+/g, '')
+        const normalizedName = s.name.toLowerCase().replace(/\s+/g, '')
+        return normalizedName === normalizedCurrent || s.name === this.user.subscription
+      })
       return sub ? sub.name : this.user.subscription
     },
     getUserSubscriptionPrice() {
-      const sub = this.subscriptionsList.find(s => 
-        s.name.toLowerCase() === this.user.subscription?.toLowerCase() ||
-        s.name === this.user.subscription
-      )
+      const sub = this.subscriptionsList.find(s => {
+        const normalizedCurrent = String(this.user.subscription).toLowerCase().replace(/\s+/g, '')
+        const normalizedName = s.name.toLowerCase().replace(/\s+/g, '')
+        return normalizedName === normalizedCurrent || s.name === this.user.subscription
+      })
       return sub ? sub.price : '0'
     },
     getUserSubscriptionFeatures() {
-      const sub = this.subscriptionsList.find(s => 
-        s.name.toLowerCase() === this.user.subscription?.toLowerCase() ||
-        s.name === this.user.subscription
-      )
+      const sub = this.subscriptionsList.find(s => {
+        const normalizedCurrent = String(this.user.subscription).toLowerCase().replace(/\s+/g, '')
+        const normalizedName = s.name.toLowerCase().replace(/\s+/g, '')
+        return normalizedName === normalizedCurrent || s.name === this.user.subscription
+      })
       return sub ? sub.features : []
     },
     getStatusText(status) {
@@ -175,6 +222,14 @@ export default {
         cancelled: ' Отменена'
       }
       return statuses[status] || status
+    },
+    getProfileCompletion() {
+      const fields = ['username', 'email', 'date', 'phone', 'city', 'goal', 'height', 'weight', 'birthday', 'gender']
+      const filled = fields.reduce((count, field) => {
+        const value = this.user[field]
+        return count + (value !== undefined && value !== null && value !== '' ? 1 : 0)
+      }, 0)
+      return Math.round((filled / fields.length) * 100)
     },
     goToTariffs() {
       this.$router.push('/#pricing')
@@ -261,6 +316,41 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+}
+
+.profile-completion {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.completion-label {
+  color: #4a5568;
+  font-weight: 600;
+}
+
+.completion-bar {
+  flex: 1;
+  min-width: 180px;
+  height: 12px;
+  background: #e5e7eb;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.completion-fill {
+  height: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 999px;
+}
+
+.completion-value {
+  color: #2d3748;
+  font-weight: 600;
+  min-width: 45px;
+  text-align: right;
 }
 
 .info-row {

@@ -5,7 +5,15 @@ const normalizeUser = (user) => ({
   username: user.username,
   email: user.email,
   role: user.role,
-  subscription: user.subscription || 'none'
+  subscription: user.subscription || 'none',
+  date: user.date || '20.05.2026',
+  phone: user.phone || '+7 (900) 000-00-00',
+  city: user.city || 'Москва',
+  goal: user.goal || 'Поддерживать форму',
+  height: user.height || 175,
+  weight: user.weight || 70,
+  birthday: user.birthday || '01.01.1990',
+  gender: user.gender || 'Не указан'
 })
 
 export async function loginWithJson(email, password) {
