@@ -1,0 +1,36 @@
+{
+  "users": [
+    {
+      "id": "admin-1",
+      "username": "Администратор",
+      "email": "admin@fitcomplex.ru",
+      "password": "admin123",
+      "role": "admin",
+      "subscription": "Премиум",
+      "date": "01.01.2025",
+      "phone": "+7 (900) 111-22-33",
+      "city": "Москва",
+      "goal": "Укрепление здоровья",
+      "height": 180,
+      "weight": 78,
+      "birthday": "10.03.1985",
+      "gender": "Мужской"
+    },
+    {
+      "id": "user-1",
+      "username": "Иван Петров",
+      "email": "user@fitcomplex.ru",
+      "password": "user123",
+      "role": "user",
+      "subscription": "Старт",
+      "date": "12.02.2026",
+      "phone": "+7 (999) 555-44-33",
+      "city": "Санкт-Петербург",
+      "goal": "Похудение",
+      "height": 178,
+      "weight": 82,
+      "birthday": "15.08.1990",
+      "gender": "Мужской"
+    }
+  ]
+}
