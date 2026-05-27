@@ -1,6 +1,5 @@
 <template>
   <div class="home-page">
-    <!-- Hero секция -->
     <section class="hero">
       <div class="container">
         <div class="hero-content">
@@ -11,7 +10,6 @@
       </div>
     </section>
 
-    <!-- Статистика -->
     <section class="stats">
       <div class="container">
         <div class="stats-grid">
@@ -23,7 +21,6 @@
       </div>
     </section>
 
-    <!-- Услуги -->
     <section class="services" id="services">
       <div class="container">
         <h2 class="section-title">Наши услуги</h2>

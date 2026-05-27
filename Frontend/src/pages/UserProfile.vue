@@ -159,7 +159,7 @@ export default {
         date: '20.05.2026',
         subscription: 'Премиум',
         phone: '+7 (900) 000-00-00',
-        city: 'Москва',
+        city: 'Северодвинск',
         goal: 'Поддерживать форму',
         height: 175,
         weight: 70,
@@ -180,7 +180,7 @@ export default {
           this.bookings = response.data.data
         }
       } catch (error) {
-        // Тестовые данные для демонстрации
+  
         this.bookings = [
           { id: 1, date: '22.05.2026', time: '18:00', training: ' Йога', status: 'confirmed' },
           { id: 2, date: '24.05.2026', time: '19:00', training: ' Кроссфит', status: 'confirmed' },

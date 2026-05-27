@@ -28,7 +28,6 @@ class LoginController {
         });
       }
       
-      // Создаём пользователя в таблице Users
       const newUser = {
         id: `user-${Date.now()}`,
         username,
@@ -76,7 +75,7 @@ class LoginController {
     }
   }
 
-  // POST /api/auth/login
+
   async login(req, res) {
     try {
       const { email, password } = req.body;
