@@ -9,8 +9,7 @@
   "dependencies": {
     "cors": "^2.8.6",
     "dotenv": "^16.6.1",
-    "express": "^4.22.2",
-    "axios": "^1.16.1"
+    "express": "^4.22.2"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"

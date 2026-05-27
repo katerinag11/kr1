@@ -49,7 +49,7 @@
           window.dispatchEvent(new Event('storage'))
           this.$router.push('/')
         } catch (err) {
-          this.error = err.message || 'Ошибка входа'
+          this.error = err.response?.data?.message || err.message || 'Ошибка входа'
         } finally {
           this.loading = false
         }
